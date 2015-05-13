@@ -1,0 +1,34 @@
+- hosts: log
+
+  sudo: yes
+
+  roles:
+    - role: ansible-elasticsearch
+
+    - role: valentinogagliardi.logstash-role
+      logstash_version: "1.4"
+
+      logstash_defaults:
+        - directive: "LS_USER=root"
+        - directive: 'LS_HEAP_SIZE="256m"'
+
+      logstash_inputs:
+        syslog: >-
+          host => "{{ ansible_eth0.ipv4.address }}"
+          port => "1514"
+          type => "from_ossec_syslog"
+        collectd: >-
+          host => "{{ ansible_eth0.ipv4.address }}"
+          port => "25887"
+
+      logstash_outputs:
+        file: >-
+          path => "/var/log/logstash/output.log"
+        elasticsearch_http: >-
+          host => "localhost"
+          index => "logstash-%{+YYYY.MM}"
+
+      tags: logstash
+
+  vars_files:
+    - vars/global.yml

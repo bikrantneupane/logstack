@@ -1,0 +1,42 @@
+---
+- name: Kibana archive available
+  get_url:
+    dest=/opt
+    url=https://download.elastic.co/kibana/kibana/kibana-{{ elasticsearch_kibana_version }}.tar.gz
+    owner={{ elasticsearch_user }} group={{ elasticsearch_user }}
+  sudo: yes
+  register: new_archive_downloaded
+
+- name: Kibana archive uncompressed
+  unarchive:
+    src=/opt/kibana-{{ elasticsearch_kibana_version }}.tar.gz
+    dest=/opt copy=no
+    owner={{ elasticsearch_user }} group={{ elasticsearch_user }}
+  sudo: yes
+  when: new_archive_downloaded|changed
+
+- name: Uncompressed Kibana linked to path
+  file:
+    src=/opt/kibana-{{ elasticsearch_kibana_version }}
+    path={{ elasticsearch_kibana_path }} state=link
+    owner={{ elasticsearch_user }} group={{ elasticsearch_user }}
+  sudo: yes
+
+- name: Kibana files ownership
+  file:
+    path=/opt/kibana-{{ elasticsearch_kibana_version }}
+    state=directory
+    owner={{ elasticsearch_user }} group={{ elasticsearch_user }} recurse=yes
+  changed_when: False
+  sudo: yes
+
+# Configure Kibana instance
+- name: Configuring Kibana instance
+  template: src=kibana.yml.j2 dest={{ elasticsearch_kibana_path }}/config/kibana.yml owner={{ elasticsearch_user }} group={{ elasticsearch_group }} mode=0644
+  when: elasticsearch_kibana_path is defined
+
+- name: Add Kibana init.d daemon script
+  template: src=kibana.init.d.j2 dest=/etc/init.d/kibana mode=0755
+- name: Ensure Kibana is started
+  action: service name=kibana enabled=yes state=started
+

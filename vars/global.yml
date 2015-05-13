@@ -1,0 +1,36 @@
+---
+# Elasticsearch Ansible Sample Variables
+
+elasticsearch_version: 1.5.2
+elasticsearch_heap_size: 512m
+elasticsearch_max_open_files: 65535
+elasticsearch_max_locked_memory: unlimited
+elasticsearch_timezone: "America/Los_Angeles"
+elasticsearch_cluster_name: elk_log
+elasticsearch_node_max_local_storage_nodes: 1
+elasticsearch_index_mapper_dynamic: "true"
+elasticsearch_memory_bootstrap_mlockall: "true"
+elasticsearch_gateway_type: local
+elasticsearch_gateway_recover_after_nodes: 1
+elasticsearch_gateway_recover_after_time: 2m
+elasticsearch_gateway_expected_nodes: 1
+elasticsearch_discovery_zen_minimum_master_nodes: 1
+elasticsearch_discovery_zen_ping_timeout: 30s
+elasticsearch_discovery_zen_ping_multicast_enabled: "true"
+elasticsearch_misc_auto_create_index: "true"
+elasticsearch_misc_query_bool_max_clause_count: 4096
+elasticsearch_misc_disable_delete_all_indices: "true"
+elasticsearch_java_opts: "-XX:-UseSuperWord"
+
+elasticsearch_node_data: "true"
+elasticsearch_node_master: "true"
+elasticsearch_node_local: "false"
+elasticsearch_index_number_of_shards: 5
+elasticsearch_index_number_of_replicas: 1
+
+elasticsearch_service_startonboot: yes
+elasticsearch_service_state: started
+
+
+
+open_jdk_deb: "openjdk-7-jre"
